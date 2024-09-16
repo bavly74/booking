@@ -1969,19 +1969,25 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c,
     _setup = _vm._self._setupProxy;
-  return _c("div", [_c("router-link", {
+  return _c("div", [_c("nav", {
+    staticClass: "navbar navbar-expand-lg navbar-light bg-light"
+  }, [_c("router-link", {
+    staticClass: "navbar-brand",
     attrs: {
       to: {
         name: "home"
       }
     }
   }, [_vm._v("Home")]), _vm._v(" "), _c("router-link", {
+    staticClass: "nav-link",
     attrs: {
       to: {
         name: "second"
       }
     }
-  }, [_vm._v("Second")]), _vm._v(" "), _c("router-view")], 1);
+  }, [_vm._v("Second")])], 1), _vm._v(" "), _c("div", {
+    staticClass: "mb-4 mt-4"
+  }), _vm._v(" "), _c("router-view")], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
