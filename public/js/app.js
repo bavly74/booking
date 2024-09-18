@@ -1945,6 +1945,14 @@ __webpack_require__.r(__webpack_exports__);
       return this.bookables == null ? 0 : Math.ceil(this.bookables.length / this.columns);
     }
   },
+  methods: {
+    calculateItemsInARow: function calculateItemsInARow(row) {
+      return this.bookables.slice((row - 1) * this.columns, row * this.columns);
+    },
+    addPlaceholder: function addPlaceholder(row) {
+      return this.columns - this.calculateItemsInARow(row).lenght;
+    }
+  },
   created: function created() {
     var _this = this;
     this.loading = true;
@@ -1969,6 +1977,10 @@ __webpack_require__.r(__webpack_exports__);
         title: "new title 2",
         content: "new content 2",
         price: 2500
+      }, {
+        title: "new title 3",
+        content: "new content 3",
+        price: 3500
       }, {
         title: "new title 3",
         content: "new content 3",
@@ -2044,16 +2056,23 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "container"
-  }, [_vm._v("\n    Rows : " + _vm._s(_vm.rows) + "\n    "), _vm.loading ? _c("div", [_c("h2", [_vm._v("Items are loading ....")])]) : _c("div", _vm._l(_vm.bookables, function (bookable, index) {
-    return _c("bookable-item-list", {
-      key: index,
-      attrs: {
-        "book-title": bookable.title,
-        "book-content": bookable.content,
-        "book-price": bookable.price
-      }
-    });
-  }), 1)]);
+  }, [_vm._v("\n        Rows : " + _vm._s(_vm.rows) + "\n\n\n        "), _vm.loading ? _c("div", [_c("h2", [_vm._v("Items are loading ....")])]) : _vm._l(_vm.rows, function (row) {
+    return _c("div", {
+      key: "row" + row,
+      staticClass: "row"
+    }, [_vm._l(_vm.calculateItemsInARow(row), function (bookable) {
+      return _c("div", {
+        key: "bookable" + bookable,
+        staticClass: "col"
+      }, [_c("bookable-item-list", {
+        attrs: {
+          "book-title": bookable.title,
+          "book-content": bookable.content,
+          "book-price": bookable.price
+        }
+      })], 1);
+    }), _vm._v("\n            " + _vm._s(_vm.addPlaceholder(row)) + "\n\n")], 2);
+  })], 2);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -53262,8 +53281,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_3__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\Bavly's Projects\booking\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\Bavly's Projects\booking\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! F:\booking\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! F:\booking\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
