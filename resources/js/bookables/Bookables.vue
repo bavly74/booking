@@ -6,22 +6,19 @@
         <div v-if="loading">
             <h2>Items are loading ....</h2>
         </div>
-
-        <div class="row" v-for="row in rows" :key=" 'row' +row" v-else>
-            <div class="col"
-                 v-for="bookable in calculateItemsInARow(row)"
-                 :key="'bookable'+bookable"
+        <div class="row mb-4" v-for="row in rows" :key="'row' + row">
+            <div
+                class="col"
+                v-for="(bookable, column) in bookablesInRow(row)"
+                :key="'row' + row + column"
             >
                 <bookable-item-list
-                    :book-title="bookable.title"
-                    :book-content="bookable.content"
-                    :book-price="bookable.price"
+                    :item-title="bookable.title"
+                    :item-content="bookable.content"
+                    :item-price="1000"
                 ></bookable-item-list>
-
             </div>
-            {{addPlaceholder(row)}}
-
-<!--            <div class="col" v-for="p in addPlaceholder(row)" :key="'p'+p"></div>-->
+            <div class="col" v-for="p in placeholdersInRow(row)" :key="'placeholder' + row + p"></div>
         </div>
 
 
@@ -49,16 +46,14 @@ export default {
           return this.bookables == null ? 0 : Math.ceil(this.bookables.length / this.columns);
       }
     },
-    methods :{
-      calculateItemsInARow (row){
-          return this.bookables.slice((row-1) * this.columns , row * this.columns)
-      },
-
-        addPlaceholder(row){
-            return this.columns - this.calculateItemsInARow(row).lenght;
+    methods: {
+        bookablesInRow(row) {
+            return this.bookables.slice((row - 1) * this.columns, row * this.columns);
+        },
+        placeholdersInRow(row) {
+            return this.columns - this.bookablesInRow(row).length;
         }
     },
-
     created() {
         this.loading = true;
         setTimeout(()=>{

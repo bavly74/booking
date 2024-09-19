@@ -1910,9 +1910,9 @@ module.exports = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    bookTitle: String,
-    bookContent: String,
-    bookPrice: Number
+    itemTitle: String,
+    itemContent: String,
+    itemPrice: Number
   }
 });
 
@@ -1946,11 +1946,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    calculateItemsInARow: function calculateItemsInARow(row) {
+    bookablesInRow: function bookablesInRow(row) {
       return this.bookables.slice((row - 1) * this.columns, row * this.columns);
     },
-    addPlaceholder: function addPlaceholder(row) {
-      return this.columns - this.calculateItemsInARow(row).lenght;
+    placeholdersInRow: function placeholdersInRow(row) {
+      return this.columns - this.bookablesInRow(row).length;
     }
   },
   created: function created() {
@@ -2030,9 +2030,9 @@ var render = function render() {
     staticClass: "card-body"
   }, [_c("h2", {
     staticClass: "card-title"
-  }, [_vm._v(_vm._s(_vm.bookTitle))]), _vm._v(" "), _c("h5", {
+  }, [_vm._v(_vm._s(_vm.itemTitle))]), _vm._v(" "), _c("h5", {
     staticClass: "card-title"
-  }, [_vm._v(_vm._s(_vm.bookContent) + " its price is " + _vm._s(_vm.bookPrice))])])]);
+  }, [_vm._v(_vm._s(_vm.itemContent) + " its price is " + _vm._s(_vm.itemPrice))])])]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -2056,22 +2056,27 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "container"
-  }, [_vm._v("\n        Rows : " + _vm._s(_vm.rows) + "\n\n\n        "), _vm.loading ? _c("div", [_c("h2", [_vm._v("Items are loading ....")])]) : _vm._l(_vm.rows, function (row) {
+  }, [_vm._v("\n    Rows : " + _vm._s(_vm.rows) + "\n\n\n    "), _vm.loading ? _c("div", [_c("h2", [_vm._v("Items are loading ....")])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.rows, function (row) {
     return _c("div", {
       key: "row" + row,
-      staticClass: "row"
-    }, [_vm._l(_vm.calculateItemsInARow(row), function (bookable) {
+      staticClass: "row mb-4"
+    }, [_vm._l(_vm.bookablesInRow(row), function (bookable, column) {
       return _c("div", {
-        key: "bookable" + bookable,
+        key: "row" + row + column,
         staticClass: "col"
       }, [_c("bookable-item-list", {
         attrs: {
-          "book-title": bookable.title,
-          "book-content": bookable.content,
-          "book-price": bookable.price
+          "item-title": bookable.title,
+          "item-content": bookable.content,
+          "item-price": 1000
         }
       })], 1);
-    }), _vm._v("\n            " + _vm._s(_vm.addPlaceholder(row)) + "\n\n")], 2);
+    }), _vm._v(" "), _vm._l(_vm.placeholdersInRow(row), function (p) {
+      return _c("div", {
+        key: "placeholder" + row + p,
+        staticClass: "col"
+      });
+    })], 2);
   })], 2);
 };
 var staticRenderFns = [];
@@ -53281,8 +53286,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_3__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! F:\booking\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! F:\booking\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! G:\Bavly's Projects\booking\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! G:\Bavly's Projects\booking\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

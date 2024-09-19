@@ -3,8 +3,8 @@
 <template>
     <div class="card">
         <div class="card-body">
-            <h2 class="card-title">{{bookTitle}}</h2>
-            <h5 class="card-title">{{bookContent}} its price is {{bookPrice}}</h5>
+            <h2 class="card-title">{{itemTitle}}</h2>
+            <h5 class="card-title">{{itemContent}} its price is {{itemPrice}}</h5>
         </div>
 
     </div>
@@ -13,9 +13,9 @@
 <script>
 export default {
     props: {
-        bookTitle: String,
-        bookContent: String ,
-        bookPrice: Number
+        itemTitle: String,
+        itemContent: String ,
+        itemPrice: Number
     }
 }
 </script>
