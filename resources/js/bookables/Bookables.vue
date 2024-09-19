@@ -1,21 +1,22 @@
 <template>
     <div class="container">
         Rows : {{rows}}
-
-
         <div v-if="loading">
-            <h2>Items are loading ....</h2>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
         </div>
         <div class="row mb-4" v-for="row in rows" :key="'row' + row">
             <div
-                class="col"
+                class="col d-flex align-items-stretch"
                 v-for="(bookable, column) in bookablesInRow(row)"
                 :key="'row' + row + column"
             >
                 <bookable-item-list
                     :item-title="bookable.title"
-                    :item-content="bookable.content"
+                    :item-description="bookable.description"
                     :item-price="1000"
+                    :id="bookable.id"
                 ></bookable-item-list>
             </div>
             <div class="col" v-for="p in placeholdersInRow(row)" :key="'placeholder' + row + p"></div>
@@ -55,20 +56,28 @@ export default {
         }
     },
     created() {
-        this.loading = true;
-        setTimeout(()=>{
-            this.bookables=[
-                {title: "new title 1" , content : "new content 1" , price:1500} ,
-                {title: "new title 2" , content : "new content 2" , price:2500} ,
-                {title: "new title 3" , content : "new content 3" , price:3500} ,
-                {title: "new title 1" , content : "new content 1" , price:1500} ,
-                {title: "new title 2" , content : "new content 2" , price:2500} ,
-                {title: "new title 3" , content : "new content 3" , price:3500} ,
-                {title: "new title 3" , content : "new content 3" , price:3500}
+        // const p = new Promise((resolve, reject)=>{
+        //     console.log(resolve);
+        //     console.log(reject);
+        //     setTimeout(()=>{
+        //         reject('hello');
+        //     },2000)
+        // })
+        //     .then(result=>console.log('success '+result))
+        //     .catch(result=>console.log('err '+result))
+        // ;
+        //
+        // console.log(p)
 
-            ] ;
-            this.loading = false;
-        },2000)
+        this.loading = true;
+
+
+        const request = axios.get('/api/bookables')
+            .then(result=>{
+                this.bookables=result.data
+                this.loading = false;
+            })
+
 
     }
 }

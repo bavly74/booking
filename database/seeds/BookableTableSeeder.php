@@ -1,5 +1,4 @@
 <?php
-
 use App\Bookable;
 use Illuminate\Database\Seeder;
 

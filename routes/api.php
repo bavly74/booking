@@ -1,5 +1,6 @@
 <?php
 
+use App\Bookable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('bookables',function (){
+    return Bookable::all();
+});
+
+Route::get('bookable/{id}',function ($id){
+    return Bookable::findorFail($id);
 });

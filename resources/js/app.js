@@ -1,4 +1,4 @@
-import Index from "./components/Index.vue";
+import Index from "./Index.vue";
 
 require('./bootstrap');
 import router from "./routes";
