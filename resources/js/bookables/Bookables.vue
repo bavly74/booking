@@ -56,29 +56,12 @@ export default {
         }
     },
     created() {
-        // const p = new Promise((resolve, reject)=>{
-        //     console.log(resolve);
-        //     console.log(reject);
-        //     setTimeout(()=>{
-        //         reject('hello');
-        //     },2000)
-        // })
-        //     .then(result=>console.log('success '+result))
-        //     .catch(result=>console.log('err '+result))
-        // ;
-        //
-        // console.log(p)
-
         this.loading = true;
-
-
         const request = axios.get('/api/bookables')
             .then(result=>{
-                this.bookables=result.data
+                this.bookables=result.data.data
                 this.loading = false;
             })
-
-
     }
 }
 </script>
