@@ -19,3 +19,4 @@ Route::get('/user', function (Request $request) {
 
 
 Route::apiResource('bookables', 'Api\BookableController');
+Route::get('bookables/{id}/availability', 'Api\BookableAvailabilityController');
