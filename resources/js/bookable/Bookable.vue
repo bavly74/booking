@@ -11,6 +11,7 @@
                             <p class="card-text">{{bookable.description}}</p>
                         </div>
                     </div>
+                    <ReviewList></ReviewList>
                 </div>
 
                 <div class="col-md-4 pt-4">
@@ -35,10 +36,12 @@
 
 <script>
 import Availability from "./Availability";
+import ReviewList from "./ReviewList.vue";
 export default {
 
     components :{
-        Availability
+        Availability,
+        ReviewList
     },
 
     data(){
@@ -53,7 +56,7 @@ export default {
         const request=axios.get(`/api/bookables/${this.$route.params.id}`)
            .then(response=>{
                this.bookable = response.data.data
-               console.log(this.bookable)
+               // console.log(this.bookable)
                this.loading =false
            })
     }
