@@ -19,4 +19,5 @@ Route::get('/user', function (Request $request) {
 
 
 Route::apiResource('bookables', 'Api\BookableController');
-Route::get('bookables/{id}/availability', 'Api\BookableAvailabilityController');
+Route::get('bookables/{id}/availability', 'Api\BookableAvailabilityController')->name('bookables.availability.show');
+Route::get('bookables/{id}/reviews', 'Api\BookableReviewsController')->name('bookables.reviews.show');
