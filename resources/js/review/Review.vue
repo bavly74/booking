@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <div v-if="loading">loading ...</div>
@@ -39,7 +38,7 @@ export default {
     created() {
         this.loadin=true
         axios.get(`/api/reviews/${this.$route.params.id}`)
-            .then(response=>{ this.existingReview=response.data.data })
+            .then(response=>{ this.existingReview = response.data.data })
             .catch(error=>{})
             .then( ()=>this.loading=false )
     },
