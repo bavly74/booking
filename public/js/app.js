@@ -2115,22 +2115,39 @@ __webpack_require__.r(__webpack_exports__);
         rating: 5,
         content: null
       },
+      existingReview: null,
       loading: false,
-      existingReview: null
+      booking: null
     };
   },
   created: function created() {
     var _this = this;
-    this.loadin = true;
+    this.loading = true;
+    // 1. If review already exists (in reviews table by id)
     axios.get("/api/reviews/".concat(this.$route.params.id)).then(function (response) {
       _this.existingReview = response.data.data;
-    })["catch"](function (error) {}).then(function () {
-      return _this.loading = false;
+    })["catch"](function (err) {
+      if (err.response && err.response.status && 404 === err.response.status) {
+        // 2. Fetch a booking by a review key
+        return axios.get("/api/bookingsByReview/".concat(_this.$route.params.id)).then(function (response) {
+          _this.booking = response.data.data;
+        });
+      }
+    }).then(function () {
+      _this.loading = false;
     });
+
+    // 3. Store the review
   },
   computed: {
     alreadyReviewed: function alreadyReviewed() {
+      return this.hasReview || !this.booking;
+    },
+    hasReview: function hasReview() {
       return this.existingReview !== null;
+    },
+    hasBooking: function hasBooking() {
+      return this.booking !== null;
     }
   }
 });
@@ -2579,7 +2596,34 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", [_vm.loading ? _c("div", [_vm._v("loading ...")]) : _c("div", [_vm.alreadyReviewed ? _c("div", [_c("h5", [_vm._v("you've already reviewed")])]) : _c("div", [_c("div", {
+  return _c("div", {
+    staticClass: "row"
+  }, [_c("div", {
+    "class": [{
+      "col-md-4": _vm.loading || !_vm.alreadyReviewed
+    }, {
+      "d-none": !_vm.loading && _vm.alreadyReviewed
+    }]
+  }, [_c("div", {
+    staticClass: "card"
+  }, [_c("div", {
+    staticClass: "card-body"
+  }, [_vm.loading ? _c("div", [_vm._v("Loading...")]) : _c("div", [_c("p", [_vm._v("\n                        Stayed at\n                        "), _c("router-link", {
+    attrs: {
+      to: {
+        name: "bookable",
+        params: {
+          id: _vm.booking.bookable.id
+        }
+      }
+    }
+  }, [_vm._v(_vm._s(_vm.booking.bookable.title))])], 1), _vm._v(" "), _c("p", [_vm._v("From " + _vm._s(_vm.booking.from) + " to " + _vm._s(_vm.booking.to))])])])])]), _vm._v(" "), _c("div", {
+    "class": [{
+      "col-md-8": _vm.loading || !_vm.alreadyReviewed
+    }, {
+      "col-md-12": !_vm.loading && _vm.alreadyReviewed
+    }]
+  }, [_vm.loading ? _c("div", [_vm._v("Loading...")]) : _c("div", [_vm.alreadyReviewed ? _c("div", [_c("h3", [_vm._v("You've already left a review for this booking!")])]) : _c("div", [_c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "text-muted"
@@ -2592,29 +2636,40 @@ var render = function render() {
       },
       expression: "review.rating"
     }
-  })], 1), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-lg btn-primary btn-block"
-  }, [_vm._v("Submit")])])])]);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
+  })], 1), _vm._v(" "), _c("div", {
     staticClass: "form-group"
   }, [_c("label", {
     staticClass: "text-muted",
     attrs: {
       "for": "content"
     }
-  }, [_vm._v("Describe your experience with")]), _vm._v(" "), _c("textarea", {
+  }, [_vm._v("Describe your expirience with")]), _vm._v(" "), _c("textarea", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.review.content,
+      expression: "review.content"
+    }],
     staticClass: "form-control",
     attrs: {
       name: "content",
       cols: "30",
       rows: "10"
+    },
+    domProps: {
+      value: _vm.review.content
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.review, "content", $event.target.value);
+      }
     }
-  })]);
-}];
+  })]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-lg btn-primary btn-block"
+  }, [_vm._v("Submit")])])])])]);
+};
+var staticRenderFns = [];
 render._withStripped = true;
 
 

@@ -14,7 +14,7 @@ class BookingByReviewBookableResource extends JsonResource
      */
     public function toArray($request)
     {
-            return [
+         return [
         'id'=>$this->id,
         'title'=>$this->title,
         'description'=>$this->description,
