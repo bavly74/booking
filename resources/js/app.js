@@ -4,7 +4,8 @@ import moment from "moment";
 import router from "./routes";
 import VueRouter from "vue-router";
 import RatingStar from "./shared/components/RatingStar.vue";
-
+import FatalError from "./shared/components/FatalError.vue";
+import ValidationError from "./shared/components/ValidationError.vue";
 window.Vue = require('vue');
 Vue.use(VueRouter);
 
@@ -13,6 +14,8 @@ Vue.filter('fromNow', function (value) {
 })
 
 Vue.component('rating-star',RatingStar);
+Vue.component('fatal-error',FatalError);
+Vue.component('v-error',ValidationError);
 
 
 // 1st way to import components => Globally

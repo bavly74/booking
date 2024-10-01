@@ -19,9 +19,8 @@
                             }
                              ]"
                     >
-                <div class="invalid-feedback" v-for="(error , index) in this.displayErrors('from')" :key="'from'+ index" >
-                    {{error}}
-                </div>
+                <v-error :errors="displayErrors('from')"></v-error>
+
             </div>
 
                 <div class="form-group col-md-6">
@@ -34,9 +33,8 @@
                         @keydown.enter="checkAvailability"
                         :class="[{'is-invalid':this.displayErrors('to')}]"
                     >
-                    <div class="invalid-feedback" v-for="(error , index) in this.displayErrors('to')" :key="'to'+ index" >
-                        {{error}}
-                    </div>
+
+                    <v-error :errors="displayErrors('to')"></v-error>
                 </div>
 
             <button class="btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >Check !</button>
@@ -48,6 +46,8 @@
 
 
 <script>
+import {is422} from "../shared/utils/response";
+
 export default {
     props:{
       bookableId: String
@@ -72,7 +72,7 @@ export default {
                     this.status=response.status
                 })
                 .catch(error=>{
-                    if (422 === error.response.status ){
+                    if (is422(error)){
                         this.errors = error.response.data.errors
                     }
                     this.status = error.response.status;
