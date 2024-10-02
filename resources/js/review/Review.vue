@@ -1,7 +1,8 @@
 <template>
     <div>
         <fatal-error v-if="error"></fatal-error>
-        <div v-else class="row">
+        <success v-if="success"> Thank your for your review ! </success>
+        <div v-if="!success && !error" class="row">
             <div
                 :class="[{'col-md-4': twoColumns}, {'d-none': oneColumn}]"
             >
@@ -29,8 +30,7 @@
                         <h3>You've already left a review for this booking!</h3>
                     </div>
                     <div v-else>
-                        <div v-if="success"><h1>You're review has been sent successfully</h1></div>
-                        <div v-else>
+
                             <div class="form-group">
                                 <label class="text-muted">Select the star rating (1 is worst - 5 is best)</label>
                                 <rating-star class="fa-3x" v-model="review.rating"></rating-star>
@@ -52,7 +52,7 @@
 
 
                             <button class="btn btn-lg btn-primary btn-block" @click.prevent="submit" :disabled="sending" >Submit</button>
-                        </div>
+
 
                     </div>
 
@@ -65,8 +65,9 @@
 
 <script>
 import {is404, is422} from "../shared/utils/response";
-
+import ValidationErrors from "../shared/mixins/ValidationErrors";
 export default {
+    mixins:[ValidationErrors],
     data() {
         return {
             review: {
@@ -79,36 +80,32 @@ export default {
             booking: null ,
             error: false ,
             success: null ,
-            errors: null ,
             sending: false
         };
     },
-    created() {
+
+   async created() {
         this.review.id = this.$route.params.id;
         this.loading = true;
         // 1. If review already exists (in reviews table by id)
-        axios
-            .get(`/api/reviews/${this.review.id}`)
-            .then(response => {
-                this.existingReview = response.data.data;
-            })
-            .catch(err => {
-                if ( is404(err) ) {
-                    // 2. Fetch a booking by a review key
-                    return axios
-                        .get(`/api/bookingsByReview/${this.review.id}`)
-                        .then(response => {
-                            this.booking = response.data.data;
-                        })
-                        .catch(err => {
-                            this.error = !is404(err)
-                        });
-                }
-                this.error = true ;
-            })
-            .then(() => {
-                this.loading = false;
-            }) ;
+       try {
+           this.existingReview = (await axios.get(`/api/reviews/${this.review.id}`) ).data.data ;
+       }catch (err){
+           if ( is404(err) ) {
+               try {
+                   this.booking = (await axios.get(`/api/bookingsByReview/${this.review.id}`)).data.data;
+
+               }catch (err){
+                   this.error = !is404(err)
+               }
+           }else{
+               this.error = true ;
+           }
+       }
+
+       this.loading = false;
+
+
 
         // 3. Store the review
     },
@@ -130,32 +127,33 @@ export default {
         }
     },
     methods :{
-        submit(){
+       async submit(){
             this.sending = true ;
             this.errors=null;
-            axios.post(`/api/reviews`,this.review)
-                .then(res=>{
-                    if (201===res.status){
-                        this.success = true
+
+            try {
+                const res =  await axios.post(`/api/reviews`,this.review);
+
+                if (201===res.status){
+                    this.success = true
+                }
+            }catch (err){
+                if (is422(err)){
+                    const errors = err.response.data.errors
+                    if (errors['content'] && _.size(errors) === 1 ) {
+                        this.errors=errors ;
+                        return;
                     }
-                })
-                .catch(err =>{
-                    if (is422(err)){
-                        const errors = err.response.data.errors
-                        if (errors['content'] && _.size(errors) === 1 ) {
-                            this.errors=errors ;
-                            return;
-                        }
-                    }
-                    this.error= true
-                })
-                .then(()=>this.sending=false)
+                }
+                this.error= true;
+
+            }
+           this.sending=false;
+
+
         },
-        errorFor(field) {
-            return null !== this.errors && this.errors[field]
-                ? this.errors[field]
-                : null;
-        }
+
+
     }
 };
 </script>

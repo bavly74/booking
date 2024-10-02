@@ -15,11 +15,11 @@
                         @keydown.enter="checkAvailability"
                         :class="[
                             {
-                                'is-invalid': this.displayErrors('from')
+                                'is-invalid': this.errorFor('from')
                             }
                              ]"
                     >
-                <v-error :errors="displayErrors('from')"></v-error>
+                <v-error :errors="errorFor('from')"></v-error>
 
             </div>
 
@@ -31,10 +31,10 @@
                         name="to"
                         v-model="to"
                         @keydown.enter="checkAvailability"
-                        :class="[{'is-invalid':this.displayErrors('to')}]"
+                        :class="[{'is-invalid':this.errorFor('to')}]"
                     >
 
-                    <v-error :errors="displayErrors('to')"></v-error>
+                    <v-error :errors="errorFor('to')"></v-error>
                 </div>
 
             <button class="btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >Check !</button>
@@ -47,17 +47,18 @@
 
 <script>
 import {is422} from "../shared/utils/response";
-
+import ValidationErrors from "../shared/mixins/ValidationErrors";
 export default {
+    mixins:[ValidationErrors],
     props:{
-      bookableId: String
+      bookableId: [String,Number]
     },
     data(){
         return{
             from:null,
             to:null,
             loading:false,
-            errors:null,
+            // errors:null,
             status:null
         }
     },
@@ -80,9 +81,9 @@ export default {
                 })
                 .then( () => ( this.loading = false ))
         },
-        displayErrors(field){
-            return this.hasErrors && this.errors[field] ? this.errors[field] :null;
-        }
+        // errorFor(field){
+        //     return this.hasErrors && this.errors[field] ? this.errors[field] :null;
+        // }
     },
     computed:{
         hasErrors(){

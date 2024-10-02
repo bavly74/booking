@@ -5,9 +5,12 @@ import router from "./routes";
 import VueRouter from "vue-router";
 import RatingStar from "./shared/components/RatingStar.vue";
 import FatalError from "./shared/components/FatalError.vue";
+import Success from "./shared/components/Success.vue";
 import ValidationError from "./shared/components/ValidationError.vue";
+import Vuex from "vuex";
 window.Vue = require('vue');
 Vue.use(VueRouter);
+Vue.use(Vuex);
 
 Vue.filter('fromNow', function (value) {
     moment(value).fromNow()
@@ -15,6 +18,7 @@ Vue.filter('fromNow', function (value) {
 
 Vue.component('rating-star',RatingStar);
 Vue.component('fatal-error',FatalError);
+Vue.component('success',Success);
 Vue.component('v-error',ValidationError);
 
 
