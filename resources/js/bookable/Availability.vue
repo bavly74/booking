@@ -1,8 +1,8 @@
 <template>
     <div>
         <h6 class="text-uppercase text-secondary font-weight-bolder" >check availability
-            <span class="text-success" v-if="this.hasAvailability" style="font-weight: bold"> Available</span>
-            <span class="text-danger" v-if="this.hasNoAvailability" style="font-weight: bold"> Not Available</span>
+            <span class="text-success" v-if="hasAvailability" style="font-weight: bold"> Available</span>
+            <span class="text-danger" v-if="hasNoAvailability" style="font-weight: bold"> Not Available</span>
         </h6>
         <div class="form-row">
             <div class="form-group col-md-6" >
@@ -55,8 +55,8 @@ export default {
     },
     data(){
         return{
-            from:null,
-            to:null,
+            from:  null, // Use fallback in case store is not ready
+            to: null,
             loading:false,
             // errors:null,
             status:null
@@ -67,6 +67,11 @@ export default {
             this.loading=true;
             this.status=null;
             this.errors=null;
+
+            console.log(this.$store);  // Check if store is accessible
+
+            // this.$store.commit('setLastSearch', { from: this.from, to: this.to });
+
 
             axios.get(`/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`)
                 .then(response=>{
