@@ -1,8 +1,11 @@
 <template>
     <div>
         <h6 class="text-uppercase text-secondary font-weight-bolder" >check availability
-            <span class="text-success" v-if="hasAvailability" style="font-weight: bold"> Available</span>
-            <span class="text-danger" v-if="hasNoAvailability" style="font-weight: bold"> Not Available</span>
+            <transition>
+                <span class="text-success" v-if="hasAvailability" style="font-weight: bold"> Available</span>
+                <span class="text-danger" v-if="hasNoAvailability" style="font-weight: bold"> Not Available</span>
+            </transition>
+
         </h6>
         <div class="form-row">
             <div class="form-group col-md-6" >
@@ -37,7 +40,20 @@
                     <v-error :errors="errorFor('to')"></v-error>
                 </div>
 
-            <button class="btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >Check !</button>
+            <button class="btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >
+
+                <loading :loading="loading"></loading>
+
+            </button>
+
+            <transition>
+                 <PriceBreakDown  class="mb-4 mt-4" :price="this.price" v-if="this.price"></PriceBreakDown>
+            </transition>
+
+
+            <transition>
+                <button class="btn btn-outline-secondary btn-block" v-if="this.price" > Book now </button>
+            </transition>
 
         </div>
     </div>
@@ -48,7 +64,13 @@
 <script>
 import {is422} from "../shared/utils/response";
 import ValidationErrors from "../shared/mixins/ValidationErrors";
+import loading from "../shared/components/loading";
+import PriceBreakDown from "./PriceBreakDown.vue";
 export default {
+    components:{
+        PriceBreakDown,
+        loading
+    },
     mixins:[ValidationErrors],
     props:{
       bookableId: [String,Number]
@@ -59,33 +81,36 @@ export default {
             to: null,
             loading:false,
             // errors:null,
-            status:null
+            status:null,
+            price:null
         }
     },
     methods:{
-        checkAvailability(){
+
+        async checkAvailability(){
             this.loading=true;
             this.status=null;
             this.errors=null;
+            this.price=null;
 
-            console.log(this.$store);  // Check if store is accessible
+            try {
+                this.status = (await axios.get(`/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`)).status
+                if (this.hasAvailability){
+                    this.price = (await axios.get(`/api/bookables/${this.bookableId}/price?from=${this.from}&to=${this.to}`)).data.data
+                    console.log(this.price)
+                }
+                // this.$emit("availability", this.hasAvailability);
+            }catch (err){
+                if (is422(err)){
+                    this.errors = err.response.data.errors
+                }
+                this.status = err.response.status;
+                // this.$emit("availability", this.hasAvailability);
+            }
+            this.loading = false
 
-            // this.$store.commit('setLastSearch', { from: this.from, to: this.to });
-
-
-            axios.get(`/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`)
-                .then(response=>{
-                    this.status=response.status
-                })
-                .catch(error=>{
-                    if (is422(error)){
-                        this.errors = error.response.data.errors
-                    }
-                    this.status = error.response.status;
-
-                })
-                .then( () => ( this.loading = false ))
         },
+
         // errorFor(field){
         //     return this.hasErrors && this.errors[field] ? this.errors[field] :null;
         // }

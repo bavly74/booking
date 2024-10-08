@@ -15,7 +15,8 @@
                 </div>
 
                 <div class="col-md-4 pt-4">
-                    <availability :bookable-id="this.$route.params.id"></availability>
+                    <availability :bookable-id="this.$route.params.id" ></availability>
+
                 </div>
             </div>
 
@@ -37,17 +38,20 @@
 <script>
 import Availability from "./Availability";
 import ReviewList from "./ReviewList.vue";
+import PriceBreakDown from "./PriceBreakDown.vue";
 export default {
 
     components :{
         Availability,
-        ReviewList
+        ReviewList ,
+        PriceBreakDown
     },
 
     data(){
         return{
             bookable:null,
             loading:false,
+            price:null
         }
     },
 
@@ -59,7 +63,6 @@ export default {
                // console.log(this.bookable)
                this.loading =false
            })
-    }
-
+    },
 }
 </script>

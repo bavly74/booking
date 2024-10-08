@@ -17,6 +17,8 @@ class CreateBookablesTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->bigInteger('price');
+
             $table->timestamps();
         });
     }
