@@ -7,7 +7,7 @@
             </transition>
 
         </h6>
-        <div class="form-row">
+        <div class="row">
             <div class="form-group col-md-6" >
                     <label for="from">From</label>
                     <input
@@ -40,20 +40,13 @@
                     <v-error :errors="errorFor('to')"></v-error>
                 </div>
 
-            <button class="btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >
+            <button class="mt-4 btn btn-secondary btn-block" @click="checkAvailability" :disabled="loading" >
 
                 <loading :loading="loading"></loading>
 
             </button>
 
-            <transition>
-                 <PriceBreakDown  class="mb-4 mt-4" :price="this.price" v-if="this.price"></PriceBreakDown>
-            </transition>
 
-
-            <transition>
-                <button class="btn btn-outline-secondary btn-block" v-if="this.price" > Book now </button>
-            </transition>
 
         </div>
     </div>
@@ -77,35 +70,34 @@ export default {
     },
     data(){
         return{
-            from:  null, // Use fallback in case store is not ready
-            to: null,
+            from:  this.$store.state.lastSearch.from, // Use fallback in case store is not ready
+            to: this.$store.state.lastSearch.to,
             loading:false,
             // errors:null,
             status:null,
-            price:null
         }
     },
     methods:{
 
         async checkAvailability(){
+           this.$store.dispatch("setLastSearch",{
+                from:this.from,
+                to:this.to
+            });
             this.loading=true;
             this.status=null;
             this.errors=null;
-            this.price=null;
 
             try {
                 this.status = (await axios.get(`/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`)).status
-                if (this.hasAvailability){
-                    this.price = (await axios.get(`/api/bookables/${this.bookableId}/price?from=${this.from}&to=${this.to}`)).data.data
-                    console.log(this.price)
-                }
-                // this.$emit("availability", this.hasAvailability);
+
+                this.$emit("availability", this.hasAvailability);
             }catch (err){
                 if (is422(err)){
                     this.errors = err.response.data.errors
                 }
                 this.status = err.response.status;
-                // this.$emit("availability", this.hasAvailability);
+                this.$emit("availability", this.hasAvailability);
             }
             this.loading = false
 
@@ -125,6 +117,7 @@ export default {
         hasNoAvailability(){
             return 404 === this.status ;
         }
-    }
+    },
+
 }
 </script>

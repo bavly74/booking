@@ -10,40 +10,31 @@ import ValidationError from "./shared/components/ValidationError.vue";
 import Vuex from "vuex";
 import storeDefinition from './store';
 
-window.Vue = require('vue');
-Vue.use(VueRouter);
-Vue.use(Vuex);
+window.Vue = require('vue').default; // Ensure Vue is properly loaded
+Vue.use(VueRouter);  // Vue Router for Vue 2
+Vue.use(Vuex);       // Vuex for Vue 2
 
 Vue.filter('fromNow', function (value) {
     moment(value).fromNow()
-})
+});
 
-Vue.component('rating-star',RatingStar);
-Vue.component('fatal-error',FatalError);
-Vue.component('success',Success);
-Vue.component('v-error',ValidationError);
-
+Vue.component('rating-star', RatingStar);
+Vue.component('fatal-error', FatalError);
+Vue.component('success', Success);
+Vue.component('v-error', ValidationError);
 
 const store = new Vuex.Store(storeDefinition);
-console.log(store)
-store.commit('setLastSearch', { from: '2023-10-01', to: '2023-10-10' });
-
-console.log(store.state.lastSearch.from)
-console.log(store.state.lastSearch.to)
-
-
-// 1st way to import components => Globally
-// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-// Vue.component('second-component', require('./components/SecondComponent.vue').default);
-//
 
 const app = new Vue({
     el: '#app',
     store,
     router,
-
-    // second way to import components
-    components:{
+    components: {
         'index': Index
     },
+
+    beforeCreate() {
+        this.$store.dispatch("loadStorage");
+    }
+
 });
