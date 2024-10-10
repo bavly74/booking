@@ -3036,8 +3036,10 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       lastSearch: this.$store.state.lastSearch
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)({
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapState)({
     lastSearchComputed: 'lastSearch'
+  })), (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
+    itemsInTheBasket: 'itemsInTheBasket'
   }))
 });
 
@@ -3230,11 +3232,21 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         price: this.price,
         dates: this.lastSearch
       });
+    },
+    removeFromBasket: function removeFromBasket() {
+      this.$store.commit("removeFromBasket", this.bookable.id);
     }
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)({
-    lastSearch: 'lastSearch'
-  }))
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)({
+    lastSearch: "lastSearch"
+  })), {}, {
+    inBasketAlready: function inBasketAlready() {
+      if (null === this.bookable) {
+        return false;
+      }
+      return this.$store.getters.inBasketAlready(this.bookable.id);
+    }
+  })
 });
 
 /***/ }),
@@ -3633,21 +3645,30 @@ var render = function render() {
       to: "/",
       href: "#"
     }
-  }, [_vm._v("Booking")]), _vm._v(" "), _vm._m(0)], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "container mt-4 mb-4 pr-4 pl-4"
-  }, [_c("router-view")], 1)]);
-};
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
+  }, [_vm._v("Booking")]), _vm._v(" "), _c("div", {
     staticClass: "collapse navbar-collapse",
     attrs: {
       id: "navbarNav"
     }
   }, [_c("ul", {
     staticClass: "navbar-nav"
-  }, [_c("li", {
+  }, [_vm._m(0), _vm._v(" "), _c("router-link", {
+    staticClass: "btn nav-button",
+    attrs: {
+      to: {
+        name: "home"
+      }
+    }
+  }, [_vm._v("\n                        Basket\n                        "), _vm.itemsInTheBasket ? _c("span", {
+    staticClass: "badge bg-secondary"
+  }, [_vm._v(_vm._s(_vm.itemsInTheBasket))]) : _vm._e()])], 1)])], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "container mt-4 mb-4 pr-4 pl-4"
+  }, [_c("router-view")], 1)]);
+};
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("li", {
     staticClass: "nav-item"
   }, [_c("a", {
     staticClass: "nav-link active",
@@ -3655,7 +3676,7 @@ var staticRenderFns = [function () {
       "aria-current": "page",
       href: "#"
     }
-  }, [_vm._v("Home")])])])]);
+  }, [_vm._v("Home")])]);
 }];
 render._withStripped = true;
 
@@ -3843,10 +3864,26 @@ var render = function render() {
     }
   }) : _vm._e()], 1), _vm._v(" "), _c("transition", [this.price ? _c("button", {
     staticClass: "btn btn-outline-secondary btn-block",
+    staticStyle: {
+      width: "100%"
+    },
+    attrs: {
+      disabled: _vm.inBasketAlready
+    },
     on: {
       click: _vm.addToBasket
     }
-  }, [_vm._v(" Book now ")]) : _vm._e()])], 1)])]) : _c("div", [_vm._m(0)])]);
+  }, [_vm._v(" Book now ")]) : _vm._e()]), _vm._v(" "), _c("br"), _vm._v(" "), _vm.inBasketAlready ? _c("button", {
+    staticClass: "btn btn-outline-secondary mt-4",
+    staticStyle: {
+      width: "100%"
+    },
+    on: {
+      click: _vm.removeFromBasket
+    }
+  }, [_vm._v("Remove from basket")]) : _vm._e(), _vm._v(" "), _vm.inBasketAlready ? _c("div", {
+    staticClass: "mt-4 text-muted warning"
+  }, [_vm._v("Seems like you've added this object to basket already. If you want to change dates, remove from the basket first.")]) : _vm._e()], 1)])]) : _c("div", [_vm._m(0)])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
@@ -4543,6 +4580,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     addToBasket: function addToBasket(state, payload) {
       state.basket.items.push(payload);
+    },
+    removeFromBasket: function removeFromBasket(state, payload) {
+      state.basket.items = state.basket.items.filter(function (item) {
+        return item.bookable.id !== payload;
+      });
     }
   },
   actions: {
@@ -4555,6 +4597,18 @@ __webpack_require__.r(__webpack_exports__);
       if (lastSearch) {
         context.commit('setLastSearch', JSON.parse(lastSearch));
       }
+    }
+  },
+  getters: {
+    itemsInTheBasket: function itemsInTheBasket(state) {
+      return state.basket.items.length;
+    },
+    inBasketAlready: function inBasketAlready(state) {
+      return function (id) {
+        return state.basket.items.reduce(function (result, item) {
+          return result || item.bookable.id === id;
+        }, false);
+      };
     }
   }
 });

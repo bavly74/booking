@@ -21,10 +21,19 @@
                         <PriceBreakDown  class="mb-4 mt-4" :price="this.price" v-if="this.price"></PriceBreakDown>
                     </transition>
 
-
                     <transition>
-                        <button class="btn btn-outline-secondary btn-block" v-if="this.price" @click="addToBasket" > Book now </button>
+                        <button class="btn btn-outline-secondary btn-block" style="width: 100%" v-if="this.price" @click="addToBasket" :disabled="inBasketAlready" > Book now </button>
                     </transition>
+                    <br>
+                    <button
+                        class="btn btn-outline-secondary mt-4" style="width: 100%;"
+                        v-if="inBasketAlready"
+                        @click="removeFromBasket"
+                    >Remove from basket</button>
+                    <div
+                        v-if="inBasketAlready"
+                        class="mt-4 text-muted warning"
+                    >Seems like you've added this object to basket already. If you want to change dates, remove from the basket first.</div>
 
                 </div>
             </div>
@@ -97,14 +106,23 @@ export default {
               bookable: this.bookable,
               price: this.price ,
               dates: this.lastSearch
-          })
+          });
+
+        },
+        removeFromBasket() {
+            this.$store.commit("removeFromBasket", this.bookable.id);
         }
     },
-    computed:{
+    computed: {
         ...mapState({
-            lastSearch:'lastSearch' ,
-
-        })
-    }
+            lastSearch: "lastSearch"
+        }),
+        inBasketAlready() {
+            if (null === this.bookable) {
+                return false;
+            }
+            return this.$store.getters.inBasketAlready(this.bookable.id);
+        }
+    },
 }
 </script>
