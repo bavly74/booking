@@ -10,7 +10,7 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
-                        <router-link class="btn nav-button" :to="{name: 'home'}">
+                        <router-link class="btn nav-button" :to="{name: 'basket'}">
                             Basket
                             <span v-if="itemsInTheBasket" class="badge bg-secondary">{{ itemsInTheBasket }}</span>
                         </router-link>

@@ -17,10 +17,15 @@ class Booking extends Model
         return $this->hasOne(Review::class);
     }
 
+    public function address(){
+        return $this->belongsTo(Address::class);
+    }
+
     //returning availability (local scope query)
     public function scopeBetweenDates(Builder $query, $from, $to)
     {
-        return $query->where('to', '>=', $from)->where('from', '<=', $to);
+        return $query->where('to', '>=', $from)
+            ->where('from', '<=', $to);
     }
 
     //adding uuid whenever the model stores -->like a seeder
